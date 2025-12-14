@@ -8,3 +8,10 @@ export const GENDER={
     FEMALE:"FEMALE",
     OTHER:"OTHER"
 }
+
+export const ROOM={
+     SINGLE:"SINGLE",
+     DOUBLE:"DOUBLE",
+     DELUXE:"DELUXE",
+     SUITE:"SUITE"
+}
