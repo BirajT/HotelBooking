@@ -15,3 +15,9 @@ export const ROOM={
      DELUXE:"DELUXE",
      SUITE:"SUITE"
 }
+
+export const BOOKING_STATUS={
+    PENDING: 'Pending',
+    CONFIRM: 'Confirm',
+    COMPLETED:'Canceled '
+}
