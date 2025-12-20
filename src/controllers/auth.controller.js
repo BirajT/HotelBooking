@@ -153,5 +153,5 @@ export const update=asyncHandler(async(req,res,next)=>{
 })
 
 export const forgotPassword=asyncHandler(async(req,res,next)=>{
-    const {email,newpassword}
+    const {email,newpassword}=req.body
 })
