@@ -100,3 +100,58 @@ res.cookie('access_token', access_token, {
     })
 
 })
+
+export const logout = asyncHandler(async (req, res) => {
+  
+  res.clearCookie('access_token', {
+     httpOnly: true,
+    sameSite: 'none',
+    secure: process.env.NODE_ENV === 'development' ? false : true, 
+  })
+  res.status(200).json({
+    message: 'Logged out successfully!!',
+    status: 'success',
+    data:null
+  })
+})
+
+
+export const update=asyncHandler(async(req,res,next)=>{
+    const {email,oldpassword,newpassword}=req.body
+    if(!email || !oldpassword || newpassword)
+    {
+        throw new CustomError("fill all the data",400)
+    }
+    const user=await USER.findOne({email})
+    if(!user)
+    {
+        throw new CustomError("user not found",404)
+    }
+
+    const isMatch=await comparePassword(oldpassword,user.password)
+    if(!isMatch)
+    {
+       throw new CustomError("Password does not match",400)
+    }
+
+    user.password=await hashPassword(newpassword)
+    await user.save();
+
+    await sendEmail({
+        to:user.email,
+        subject:'password updated',
+        html:'password updated Successfully'
+    })
+
+    res.status(200).json({
+        message:"password updated",
+        status:'success',
+        data:user
+
+    })
+
+})
+
+export const forgotPassword=asyncHandler(async(req,res,next)=>{
+    const {email,newpassword}
+})
