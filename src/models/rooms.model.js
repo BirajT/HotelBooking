@@ -6,6 +6,10 @@ const roomSchema=new mongoose.Schema({
         type:Object.values(ROOM),
         default:ROOM.DOUBLE
     },
+    room_no:{
+        type:Number,
+        required:true
+    },
     room_price:{
         type:Number,
         default:3000
