@@ -28,7 +28,7 @@ const userSchema=new mongoose.Schema({
     },
     gender:{
         type:String,
-        enum:Object.values(GENDER)
+        enum:Object.values(GENDER),
     },
     profile_images:{
         type:{

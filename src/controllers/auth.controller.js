@@ -63,7 +63,7 @@ export const login=asyncHandler(async(req,res,next)=>{
         throw new CustomError("Password is required",400)
     }
 
-    const user=await USER.findOne({email})
+    const user=await User.findOne({email})
     if(!user)
     {
         throw new CustomError("User not found",400)
@@ -122,7 +122,7 @@ export const update=asyncHandler(async(req,res,next)=>{
     {
         throw new CustomError("fill all the data",400)
     }
-    const user=await USER.findOne({email})
+    const user=await User.findOne({email})
     if(!user)
     {
         throw new CustomError("user not found",404)

@@ -12,7 +12,7 @@ export const cloudinary_config = {
 
 export const jwt_config = {
     secret: process.env.JWT_SECRET,
-    expires_in : process.env.JWT_EXPIRES_IN
+    expires_in : process.env.JWT_EXPIRES_IN 
 }
 
 export const nodemailer_config = {
