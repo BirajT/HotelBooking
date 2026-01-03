@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import { MONGO_CONFIG } from "./config"
+import { MONGO_CONFIG } from "./config.js"
 
 export const connectDB=()=>{
     mongoose

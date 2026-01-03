@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ROOM } from "../constants/enums.constants";
+import { ROOM } from "../constants/enums.constants.js";
 
 const roomSchema=new mongoose.Schema({
     room_type:{

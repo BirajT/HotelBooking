@@ -1,5 +1,5 @@
-import CustomError from "../middlewares/error_handler.middleware";
-import { asyncHandler } from "../utils/asynchandler.utils";
+import CustomError from "../middlewares/error_handler.middleware.js";
+import { asyncHandler } from "../utils/asynchandler.utils.js";
 
  const dir='/hotels'
 export const getAll=asyncHandler(async(req,res)=>{

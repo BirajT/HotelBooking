@@ -1,12 +1,12 @@
-import { USER_ROLE } from "../constants/enums.constants";
-import CustomError from "../middlewares/error_handler.middleware";
-import User from "../models/user.model";
-import { asyncHandler } from "../utils/asynchandler.utils";
-import { comparePassword, hashPassword } from "../utils/bcrypt.utils";
-import { uploadToCloud } from "../utils/cloudinary.utils";
-import { registerSuccessEmail } from "../utils/email.utils";
-import { generateJWTToken } from "../utils/jwt.utils";
-import { sendEmail } from "../utils/nodemailer.utils";
+import { USER_ROLE } from "../constants/enums.constants.js";
+import CustomError from "../middlewares/error_handler.middleware.js";
+import User from "../models/user.model.js";
+import { asyncHandler } from "../utils/asynchandler.utils.js";
+import { comparePassword, hashPassword } from "../utils/bcrypt.utils.js";
+import { uploadToCloud } from "../utils/cloudinary.utils.js";
+import { registerSuccessEmail } from "../utils/email.utils.js";
+import { generateJWTToken } from "../utils/jwt.utils.js";
+import { sendEmail } from "../utils/nodemailer.utils.js";
 
 export const register=asyncHandler(async(req,res,next)=>{
     const {first_name,last_name,phone,email,password,gender}=req.body
@@ -15,14 +15,14 @@ export const register=asyncHandler(async(req,res,next)=>{
     {
         throw new CustomError("Password is required",400)
     }
-    const hashedPass=new hashPassword(password)
+    const hashedPass=await hashPassword(password)
 
-    const user=await User({
+    const user=new User({
         first_name,
         last_name,
         phone,
         email,
-        password,
+        password:hashedPass,
         gender,
         role:USER_ROLE.USER
     })
@@ -39,7 +39,7 @@ export const register=asyncHandler(async(req,res,next)=>{
     await sendEmail({
         to:user.email,
         subject:"Acccount created",
-        htmil:registerSuccessEmail
+        html:registerSuccessEmail
     })
 
     await user.save()

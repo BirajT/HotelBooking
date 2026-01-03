@@ -1,6 +1,6 @@
-import CustomError from "../middlewares/error_handler.middleware";
-import { asyncHandler } from "../utils/asynchandler.utils";
-import { sendEmail } from "../utils/nodemailer.utils";
+import CustomError from "../middlewares/error_handler.middleware.js";
+import { asyncHandler } from "../utils/asynchandler.utils.js";
+import { sendEmail } from "../utils/nodemailer.utils.js";
 
 export const getAll=asyncHandler(async(req,res)=>{
     const bookings=await Booking.find({})

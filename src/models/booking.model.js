@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { BOOKING_STATUS } from "../constants/enums.constants";
+import { BOOKING_STATUS } from "../constants/enums.constants.js";
 
 const bookingSchema=mongoose.Schema({
     user:{

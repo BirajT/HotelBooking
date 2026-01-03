@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { GENDER, USER_ROLE } from "../constants/enums.constants";
+import { GENDER, USER_ROLE } from "../constants/enums.constants.js";
 
 const userSchema=new mongoose.Schema({
     first_name:{

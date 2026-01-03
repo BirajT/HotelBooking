@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { jwt_config } from "../config/config.js";
-import CustomError from "../middleware/error_handler.middleware.js";
+import CustomError from "../middlewares/error_handler.middleware.js";
 
 export const generateJWTToken = (payload) => {
   return jwt.sign(payload, jwt_config.secret, {

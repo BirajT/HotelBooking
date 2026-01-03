@@ -1,6 +1,6 @@
 import User from "../models/user.model.js";
 import { verifyToken } from "../utils/jwt.utils.js";
-import CustomError from "./error_handler.middleware.js";
+import CustomError from "../middlewares/error_handler.middleware.js";
 
 export const authenticate = (roles) => {
   return async (req, res, next) => {

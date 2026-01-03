@@ -1,4 +1,4 @@
-import CustomError from "../middleware/error_handler.middleware.js";
+import CustomError from "../middlewares/error_handler.middleware.js";
 import cloudinary from "../config/cloudinary.config.js";
 import fs from "fs";
 
