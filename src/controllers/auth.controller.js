@@ -24,7 +24,6 @@ export const register=asyncHandler(async(req,res,next)=>{
         email,
         password:hashedPass,
         gender,
-        role:USER_ROLE.USER
     })
 
     if(image)
@@ -91,7 +90,8 @@ res.cookie('access_token', access_token, {
     sameSite: 'none',
     secure: process.env.NODE_ENV === 'development' ? false : true,
     maxAge: parseInt(process.env.COOKIE_EXPIRY || '7') * 24 * 60 * 60 * 1000
-  }). res.status(200).json({
+  });
+    res.status(200).json({
         message:"Login Success",
         status:"success",
         data:user,
