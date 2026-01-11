@@ -1,5 +1,8 @@
 import CustomError from "../middlewares/error_handler.middleware.js";
+import Hotel from "../models/hotel.model.js";
 import { asyncHandler } from "../utils/asynchandler.utils.js";
+import {getPagination} from "../utils/pagination.utils.js"
+import { uploadToCloud,deleteFile } from "../utils/cloudinary.utils.js";
 
  const dir='/hotels'
 export const getAll=asyncHandler(async(req,res)=>{
@@ -32,17 +35,18 @@ export const getAll=asyncHandler(async(req,res)=>{
           filter.price_per_hour={}
           if(minPrice) filter.price_per_hour.$gte=minPrice
           if(maxPrice) filter.price_per_hour.$lte=maxPrice
-
-          const hotels=await Hotel.find(filter).sort({createdAt:-1}.skip(skip).limit(perPageLimit))
         }
+          const hotels=await Hotel.find(filter).sort({createdAt:-1}).skip(skip).limit(perPageLimit)
+        
 
-        const total_count=await Hotel.countDocuments(filter)
+        const total_counts=await Hotel.countDocuments(filter)
         const pagination=getPagination(total_counts,currentPage,perPageLimit)
 
-        res.status(201).json({
+        res.status(200).json({
           meassage:"Hotel fetched",
           status:"success",
-          data:hotels,pagination
+          data:hotels,
+          pagination
 
           });
         })
@@ -63,15 +67,28 @@ export const getAll=asyncHandler(async(req,res)=>{
         })
 
         export const create=asyncHandler(async(req,res)=>{
-          const {name,location,rooms,hotel_images,phone}=req.body
+          const {name,location,rooms,phone}=req.body
           const file=req.file;
+
            if(!file){
         throw new CustomError('image is required',400)
     }
-    const hotel=new Hotel({name,location,rooms,hotel_images,phone})
+    if(!name || !location ||!rooms ||!phone)
+    {
+      throw new CustomError("all data are required")
+    }
+
+
+    const hotel=new Hotel({name,location,rooms,phone})
 
     const { path, public_id } = await uploadToCloud(file.path,dir);
+    hotel.hotel_images={
+      path,
+      public_id
+    }
+
     await hotel.save()
+    
     res.status(201).json({
             message:"hotel fetched",
             status:"success",
@@ -81,7 +98,7 @@ export const getAll=asyncHandler(async(req,res)=>{
 
          
       export const update=asyncHandler(async(req,res)=>{
-        const {name,location,rooms,hotel_images,phone}=req.body
+        const {name,location,rooms,phone}=req.body
         const {id}=req.params
         const hotel=await findOne({id:_id})
         const file=req.params

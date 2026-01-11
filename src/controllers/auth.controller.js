@@ -118,7 +118,7 @@ export const logout = asyncHandler(async (req, res) => {
 
 export const update=asyncHandler(async(req,res,next)=>{
     const {email,oldpassword,newpassword}=req.body
-    if(!email || !oldpassword || newpassword)
+    if(!email || !oldpassword ||! newpassword)
     {
         throw new CustomError("fill all the data",400)
     }
