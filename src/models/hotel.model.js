@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema=new mongoose.Schema({
+const hotelSchema=new mongoose.Schema({
     name:{
         type:String,
         required:true,
@@ -14,8 +14,8 @@ const userSchema=new mongoose.Schema({
         required:true,
     },
     hotel_images:{
-        type:String,
-        required:true
+         path: { type: String, required: true },
+      public_id: { type: String, required: true },
     },
     phone:{
         type:String
