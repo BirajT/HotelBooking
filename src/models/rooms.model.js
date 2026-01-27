@@ -3,7 +3,8 @@ import { ROOM } from "../constants/enums.constants.js";
 
 const roomSchema=new mongoose.Schema({
     room_type:{
-        type:Object.values(ROOM),
+        type:String,
+        enum:Object.values(ROOM),
         default:ROOM.DOUBLE
     },
     room_no:{
@@ -25,9 +26,12 @@ const roomSchema=new mongoose.Schema({
     },
     floor:{
         type:Number
+    },
+    hotel:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"hotel",
+        required:true
     }
-
-
 
 },{timestamps:true})
 

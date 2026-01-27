@@ -14,8 +14,10 @@ const hotelSchema=new mongoose.Schema({
         required:true,
     },
     hotel_images:{
-         path: { type: String, required: true },
-      public_id: { type: String, required: true },
+        type:{
+            path: { type: String, required: true },
+            public_id: { type: String, required: true },
+        }
     },
     phone:{
         type:String

@@ -4,20 +4,25 @@ import { BOOKING_STATUS } from "../constants/enums.constants.js";
 const bookingSchema=mongoose.Schema({
     user:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required:'true'
+        ref:'user',
+        required:true
+    },
+    hotel:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"hotel",
+        required:true
     },
     room:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Room",
-        required:"true"
+        ref:"room",
+        required:false
     },
     check_in:{
-        type:String,
+        type:Date,
         required:true,
     },
     check_out:{
-        type:String,
+        type:Date,
         required:true
     },
     booking_Status:{

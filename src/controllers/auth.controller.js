@@ -43,10 +43,13 @@ export const register=asyncHandler(async(req,res,next)=>{
 
     await user.save()
 
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
     res.status(200).json({
         message:"Account Created Successfully",
         status:"success",
-        data:user
+        data:userResponse
         
     });
 })
@@ -91,10 +94,14 @@ res.cookie('access_token', access_token, {
     secure: process.env.NODE_ENV === 'development' ? false : true,
     maxAge: parseInt(process.env.COOKIE_EXPIRY || '7') * 24 * 60 * 60 * 1000
   });
+
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
     res.status(200).json({
         message:"Login Success",
         status:"success",
-        data:user,
+        data:userResponse,
         access_token
 
     })
@@ -117,12 +124,13 @@ export const logout = asyncHandler(async (req, res) => {
 
 
 export const update=asyncHandler(async(req,res,next)=>{
+    const {id}=req.params
     const {email,oldpassword,newpassword}=req.body
     if(!email || !oldpassword ||! newpassword)
     {
         throw new CustomError("fill all the data",400)
     }
-    const user=await User.findOne({email})
+    const user=await User.findOne({_id:id,email})
     if(!user)
     {
         throw new CustomError("user not found",404)
@@ -143,10 +151,13 @@ export const update=asyncHandler(async(req,res,next)=>{
         html:'password updated Successfully'
     })
 
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
     res.status(200).json({
         message:"password updated",
         status:'success',
-        data:user
+        data:userResponse
 
     })
 
@@ -154,4 +165,28 @@ export const update=asyncHandler(async(req,res,next)=>{
 
 export const forgotPassword=asyncHandler(async(req,res,next)=>{
     const {email,newpassword}=req.body
+    
+    if(!email || !newpassword){
+        throw new CustomError("Email and new password are required",400)
+    }
+
+    const user=await User.findOne({email})
+    if(!user){
+        throw new CustomError("User not found",404)
+    }
+
+    user.password=await hashPassword(newpassword)
+    await user.save()
+
+    await sendEmail({
+        to:user.email,
+        subject:'Password Reset Successful',
+        html:'<h3>Your password has been reset successfully</h3>'
+    })
+
+    res.status(200).json({
+        message:"Password reset successful",
+        status:'success',
+        data:null
+    })
 })

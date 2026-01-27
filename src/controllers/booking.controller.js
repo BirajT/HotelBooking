@@ -1,6 +1,7 @@
 import CustomError from "../middlewares/error_handler.middleware.js";
 import { asyncHandler } from "../utils/asynchandler.utils.js";
 import { sendEmail } from "../utils/nodemailer.utils.js";
+import Booking from "../models/booking.model.js"
 
 export const getAll=asyncHandler(async(req,res)=>{
     const bookings=await Booking.find({})
@@ -33,25 +34,22 @@ export const getById=asyncHandler(async(req,res)=>{
 })
 
 export const create=asyncHandler(async(req,res)=>{
-    const {hotel,check_in,check_out}=req.body
-    const userId=req.user.id
+    const {hotel,room,check_in,check_out}=req.body
+    const userId=req.user._id
 
     if (!hotel || !check_in || !check_out) {
-    throw new CustomError("All fields are required")
+    throw new CustomError("All fields are required",400)
     }
 
     if (new Date(check_in) >= new Date(check_out)) {
-    return res.status(400).json({
-      success: false,
-      message: "Check-out must be after check-in",
-    });
+    throw new CustomError("Check-out must be after check-in",400)
   }
 
-    const booking=new Booking({hotel,user:userId,check_in,check_out})
+    const booking=new Booking({hotel,room,user:userId,check_in,check_out})
 
     await booking.save();
 
-    await booking.populate("hotel").populate("user")
+    await booking.populate("hotel user")
 
     
 
@@ -67,7 +65,7 @@ export const create=asyncHandler(async(req,res)=>{
   });
 
     res.status(201).json({
-        meassage:"hotel booked",
+        message:"hotel booked",
         status:"success",
         data:booking
     })
@@ -79,7 +77,7 @@ export const create=asyncHandler(async(req,res)=>{
     export const update = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { check_in, check_out } = req.body;
-  const userId = req.user.id;
+  const userId = req.user._id;
 
   const booking = await Booking.findById(id);
 
@@ -106,7 +104,7 @@ export const create=asyncHandler(async(req,res)=>{
 
     export const remove = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const userId = req.user.id;
+  const userId = req.user._id;
 
   const booking = await Booking.findById(id);
 

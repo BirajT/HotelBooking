@@ -100,8 +100,12 @@ export const getAll=asyncHandler(async(req,res)=>{
       export const update=asyncHandler(async(req,res)=>{
         const {name,location,rooms,phone}=req.body
         const {id}=req.params
-        const hotel=await findOne({id:_id})
-        const file=req.params
+        const hotel=await Hotel.findOne({_id:id})
+        const file=req.file
+
+        if(!hotel){
+          throw new CustomError("Hotel not found",404)
+        }
 
         if(name) hotel.name=name;
         if(location) hotel.location=location;
@@ -136,9 +140,9 @@ export const getAll=asyncHandler(async(req,res)=>{
         throw new CustomError("Hotel not found",404)
     }
 
-    if(hotel.hotel_image)
+    if(hotel.hotel_images)
     {
-         await deleteFile(hotel.hotel_image?.public_id)
+         await deleteFile(hotel.hotel_images?.public_id)
     }
     await hotel.deleteOne()
 
