@@ -11,17 +11,28 @@ import { sendEmail } from "../utils/nodemailer.utils.js";
 export const register=asyncHandler(async(req,res,next)=>{
     const {first_name,last_name,phone,email,password,gender}=req.body
     const image=req.file
+    
+    if(!email){
+        throw new CustomError("Email is required",400)
+    }
     if(!password)
     {
         throw new CustomError("Password is required",400)
     }
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({email: email.toLowerCase()})
+    if(existingUser){
+        throw new CustomError("User with this email already exists",409)
+    }
+    
     const hashedPass=await hashPassword(password)
 
     const user=new User({
         first_name,
         last_name,
         phone,
-        email,
+        email: email.toLowerCase(),
         password:hashedPass,
         gender,
     })
@@ -65,15 +76,15 @@ export const login=asyncHandler(async(req,res,next)=>{
         throw new CustomError("Password is required",400)
     }
 
-    const user=await User.findOne({email})
+    const user=await User.findOne({email: email.toLowerCase()})
     if(!user)
     {
-        throw new CustomError("User not found",400)
+        throw new CustomError("User not found",404)
     }
     const isMatch=await comparePassword(password,user.password)
     if(!isMatch)
     {
-        throw new CustomError("Password doesnot match")
+        throw new CustomError("Password does not match",401)
     }
     await sendEmail({
         to:user.email,
@@ -128,18 +139,18 @@ export const update=asyncHandler(async(req,res,next)=>{
     const {email,oldpassword,newpassword}=req.body
     if(!email || !oldpassword ||! newpassword)
     {
-        throw new CustomError("fill all the data",400)
+        throw new CustomError("Email, old password and new password are required",400)
     }
     const user=await User.findOne({_id:id,email})
     if(!user)
     {
-        throw new CustomError("user not found",404)
+        throw new CustomError("User not found with the provided ID and email",404)
     }
 
     const isMatch=await comparePassword(oldpassword,user.password)
     if(!isMatch)
     {
-       throw new CustomError("Password does not match",400)
+       throw new CustomError("Old password does not match",400)
     }
 
     user.password=await hashPassword(newpassword)
