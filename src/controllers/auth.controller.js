@@ -19,12 +19,10 @@ export const register=asyncHandler(async(req,res,next)=>{
     {
         throw new CustomError("Password is required",400)
     }
-    
-    // Check if user already exists
-    const existingUser = await User.findOne({email: email.toLowerCase()})
-    if(existingUser){
-        throw new CustomError("User with this email already exists",409)
-    }
+    const existingUser = await User.findOne({ email: email.toLowerCase() })
+    if (existingUser) {
+    throw new CustomError("Email already registered", 409)
+}
     
     const hashedPass=await hashPassword(password)
 
@@ -41,7 +39,7 @@ export const register=asyncHandler(async(req,res,next)=>{
     {
         const {path,public_id}=await uploadToCloud(image.path,"/profile_images")
 
-        user.profile_image={
+        user.profile_images={
             path,
             public_id
         }
@@ -134,45 +132,46 @@ export const logout = asyncHandler(async (req, res) => {
 })
 
 
-export const update=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params
-    const {email,oldpassword,newpassword}=req.body
-    if(!email || !oldpassword ||! newpassword)
-    {
-        throw new CustomError("Email, old password and new password are required",400)
-    }
-    const user=await User.findOne({_id:id,email})
-    if(!user)
-    {
-        throw new CustomError("User not found with the provided ID and email",404)
-    }
+export const changePassword=asyncHandler(async(req,res)=>{
+  const {oldpassword,newpassword}=req.body
+  const email = req.user?.email // Fixed: added optional chaining
 
-    const isMatch=await comparePassword(oldpassword,user.password)
-    if(!isMatch)
-    {
-       throw new CustomError("Old password does not match",400)
-    }
+  if (!email) {
+    throw new CustomError("User not authenticated", 401);
+  }
+  if (!oldpassword) {
+    throw new CustomError("Old password is required", 400);
+  }
+  if (!newpassword) {
+    throw new CustomError("New password is required", 400);
+  }
+
+  const user=await User.findOne({email})
+  if(!user)
+  {
+    throw new CustomError("User not found",404)
+  }
+
+const isMatch=await comparePassword(oldpassword,user.password)
+  if(!isMatch)
+  {
+    throw new CustomError("Password does not match",400)
+  }
 
     user.password=await hashPassword(newpassword)
     await user.save();
 
-    await sendEmail({
-        to:user.email,
-        subject:'password updated',
-        html:'password updated Successfully'
-    })
+  await sendEmail({
+    to:user.email,
+    subject:"password changed sucessfully",
+    html:"<h1>Password changed successfully</h1>" // Fixed: added proper HTML
+  })
 
-    const userResponse = user.toObject();
-    delete userResponse.password;
-
-    res.status(200).json({
-        message:"password updated",
-        status:'success',
-        data:userResponse
-
-    })
-
-})
+   res.status(200).json({
+    message: "Password changed successfully",
+    status: "success"
+  });
+});
 
 export const forgotPassword=asyncHandler(async(req,res,next)=>{
     const {email,newpassword}=req.body
