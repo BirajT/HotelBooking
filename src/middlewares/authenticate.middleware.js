@@ -5,9 +5,17 @@ import CustomError from "../middlewares/error_handler.middleware.js";
 export const authenticate = (roles) => {
   return async (req, res, next) => {
     try {
-      // get cookies
+      // get token from cookies or Authorization header
       const cookies = req.cookies ?? {};
-      const token = cookies["access_token"];
+      let token = cookies["access_token"];
+
+      // If no token in cookies, check Authorization header
+      if (!token) {
+        const authHeader = req.headers.authorization || req.headers.Authorization;
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+          token = authHeader.substring(7); // Remove "Bearer " prefix
+        }
+      }
 
       if (!token) {
         throw new CustomError("Unauthorized.Access denied", 401);
